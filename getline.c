@@ -12,31 +12,23 @@
  */
 ssize_t custom_getline(char **lineptr)
 {
-	/* Taille initiale du tampon */
-	size_t bufsize = BUFFER_SIZE;
+	size_t bufsize = BUFFER_SIZE; /* Taille initiale du tampon */
+	size_t i = 0;
 
-		size_t i = 0;
+	static char buffer[BUFFER_SIZE]; /*Tampon pr min les appels au sys read*/
 
-	/* Tampon statique pour minimiser les appels au système read */
-	static char buffer[BUFFER_SIZE];
-
-	/* Initialiser le pointeur de la ligne */
-	*lineptr = malloc(bufsize);
+	*lineptr = malloc(bufsize); /* Initialiser le pointeur de la ligne */
 
 	if (*lineptr == NULL)
 	{
 		perror("malloc");
 		exit(EXIT_FAILURE);
 	}
-
-	/* Boucle de lecture */
-	while (1)
+	while (1) /* Boucle de lecture */
 	{
-		/* Lire un caractère supplémentaire du terminal */
-		int c = getchar();
+		int c = getchar(); /* Lire un caractère supplémentaire du terminal */
 
-		/* Vérifier si le tampon statique est épuisé */
-		if (i == bufsize)
+		if (i == bufsize) /* Vérifier si le tampon statique est épuisé */
 		{
 			bufsize += BUFFER_SIZE;
 			*lineptr = realloc(*lineptr, bufsize);
@@ -47,26 +39,17 @@ ssize_t custom_getline(char **lineptr)
 				exit(EXIT_FAILURE);
 			}
 		}
-
-		/* Lire un caractère du tampon statique */
-		(*lineptr)[i] = buffer[i];
-
-		/* Vérifier la fin de la ligne ou de fichier*/
-		if ((*lineptr)[i] == '\n' || (*lineptr)[i] == EOF)
+		(*lineptr)[i] = buffer[i]; /* Lire un caractère du tampon statique */
+		if ((*lineptr)[i] == '\n' || (*lineptr)[i] == EOF) /*fin Ln ou de file*/
 		{
 			(*lineptr)[i] = '\0';
 			return (i);
 		}
-
 		i++;
-
-		/* Vérifier la fin de fichier */
-		if (c == EOF)
+		if (c == EOF) /* Vérifier la fin de fichier */
 		{
 			return (-1);
 		}
-
-		/* Stocker le caractère dans le tampon statique */
-		buffer[i - 1] = c;
+		buffer[i - 1] = c; /* Stocker le caractère dans le tampon statique */
 	}
 }

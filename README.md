@@ -1,6 +1,6 @@
 # Projet : Simple Shell
 
-Ce projet consiste à créer un interpréteur de commandes UNIX, également appelé shell, en respectant des normes de qualité de code, de collaboration et de fonctionnalité spécifiques.
+Ce projet consiste à créer un interpréteur de cmdes UNIX, également appelé shell, en respectant des normes de qualité de code, de collaboration et de fonctionnalité spécifiques.
 
 ## Objectifs d'Apprentissage
 

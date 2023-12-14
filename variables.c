@@ -3,14 +3,14 @@
 #include <string.h>
 
 /**
- * expand_variables - Expand environment variables in a string.
- * @input: The input string with potential environment variables.
+ * expand_vars - Expand environment vars in a string.
+ * @input: The input string with potential environment vars.
  *
- * This function expands environment variables (e.g., $HOME) in the input string.
+ * This function expands environment vars (e.g., $HOME) in the input string.
  *
- * Return: A new dynamically allocated string with expanded variables.
+ * Return: A new dynamically allocated string with expanded vars.
  */
-char *expand_variables(char *input)
+char *expand_vars(char *input)
 {
 	/* Copie la chaîne d'entrée pour éviter de la modifier directement */
 	char *expanded = strdup(input);
@@ -21,88 +21,62 @@ char *expand_variables(char *input)
 		perror("strdup");
 		exit(EXIT_FAILURE);
 	}
-
 	while (*ptr != '\0')
 	{
 		if (*ptr == '$')
 		{
-			/* Détecte le début d'une variable */
-			char *variable_start = ptr + 1;
-			/* Extraie le nom de la variable */
-			char *end_ptr = variable_start;
-			size_t variable_length = end_ptr - variable_start;
-			/* Alloue de la mémoire pour la variable */
-			char *variable = malloc(variable_length + 1);
-			/* Récupère la valeur de la variable d'environnement */
-			char *value = getenv(variable);
+			char *var_start = ptr + 1;/*Détecte le début d'une var */
+			char *end_ptr = var_start;/*Extraie le nom de la var */
+			size_t var_length = end_ptr - var_start;
+			char *var = malloc(var_length + 1);/*mémoire pr la var*/
+			char *value = getenv(var);/*RécupèreLaValeurDeLaVar d'env*/
 
 			while (*end_ptr != '\0' && !is_whitespace(*end_ptr))
 			{
 				end_ptr++;
 			}
-
-			if (variable == NULL)
+			if (var == NULL)
 			{
 				perror("malloc");
 				exit(EXIT_FAILURE);
 			}
-
-			/* Copie le nom de la variable */
-			strncpy(variable, variable_start, variable_length);
-			variable[variable_length] = '\0';
-
-			/* Trouve la fin de la variable */
-			while (*ptr != '\0' && !is_whitespace(*ptr))
+			strncpy(var, var_start, var_length);/*CopieNomDeVar*/
+			var[var_length] = '\0';
+			while (*ptr != '\0' && !is_whitespace(*ptr))/*TrouveLaFin du var*/
 			{
 				ptr++;
 			}
-
-			/* Si la variable d'environnement existe, remplace dans la chaîne */
-			if (value != NULL)
+			if (value != NULL)/*Si la var d'env existe,remplace ds la chaîne*/
 			{
 				size_t value_length = strlen(value);
 				size_t remaining_length = strlen(ptr);
-				size_t new_length = strlen(expanded) - variable_length + value_length;
+				size_t new_length = strlen(expanded) - var_length + value_length;
+				char *new_expanded = malloc(new_length + 1);/*EspPrLaNvlChaîn*/
 
-				/* Alloue suffisamment d'espace pour la nouvelle chaîne */
-				char *new_expanded = malloc(new_length + 1);
 				if (new_expanded == NULL)
 				{
 					perror("malloc");
 					exit(EXIT_FAILURE);
 				}
-
-				/* Copie la partie de la chaîne avant la variable */
-				strncpy(new_expanded, expanded, variable_start - expanded - 1);
-
-				/* Copie la valeur de la variable d'environnement */
-				strncpy(new_expanded + (variable_start - expanded - 1), value, value_length);
-
-				/* Copie la partie de la chaîne après la variable */
-				strncpy(new_expanded + (variable_start - expanded - 1) + value_length, ptr, remaining_length);
-
-				/* Met fin à la nouvelle chaîne */
-				new_expanded[new_length] = '\0';
-
-				/* Libère la mémoire de la variable */
-				free(variable);
-
-				/* Libère l'ancienne chaîne et met à jour le pointeur */
-				free(expanded);
+				/* Copie la partie de la chaîne avant la var */
+				strncpy(new_expanded, expanded, var_start - expanded - 1);
+				/* Copie la valeur de la var d'environnement */
+				strncpy(new_expanded + (var_start - expanded - 1), value, value_length);
+				/* Copie la partie de la chaîne après la var */
+				strncpy(new_expanded + (var_start - expanded - 1) + value_length, ptr, remaining_length);
+				new_expanded[new_length] = '\0';/*Met fin à la nvlle chaîne*/
+				free(var);/* Libère la mémoire de la var */
+				free(expanded);/*LibèreL'AncienneChaîneEtMet à jr le pointeur*/
 				expanded = new_expanded;
-
-				/* Réinitialise le pointeur pour qu'il pointe vers le début de la nouvelle chaîne */
-				ptr = new_expanded + (variable_start - expanded - 1) + value_length - 1;
+				/*RéinitialiseLePointeurPrQ'ilPointeVersLeDébutDeLaNvlChaîne*/
+				ptr = new_expanded + (var_start - expanded - 1) + value_length - 1;
 			}
 			else
 			{
-				/* Si la variable d'environnement n'existe pas, libère la mémoire de la variable */
-				free(variable);
+				free(var);/*SiLaVarD'envN'existePas,libèreLaMémoireDeLaVar*/
 			}
 		}
-
 		ptr++;
 	}
-
 	return (expanded);
 }

@@ -6,13 +6,13 @@
 #include <unistd.h>
 
 /**
- * execute_command - Execute a command in a child process.
- * @command: The command to execute.
+ * execute_cmd - Execute a cmd in a child process.
+ * @cmd: The cmd to execute.
  *
- * This function forks a child process and uses execvp to execute the given command.
+ * This function forks a child process & uses execvp to execute given cmd.
  * The parent process waits for the child to complete.
  */
-void execute_command(char *command)
+void execute_cmd(char *cmd)
 {
 	pid_t pid = fork();
 
@@ -25,7 +25,7 @@ void execute_command(char *command)
 	if (pid == 0)
 	{
 		/* Child process */
-		char **args = parse_arguments(command);
+		char **args = parse_arguments(cmd);
 
 		if (args[0] != NULL)
 		{
@@ -35,7 +35,7 @@ void execute_command(char *command)
 		}
 		else
 		{
-			fprintf(stderr, "Command not found\n");
+			fprintf(stderr, "cmd not found\n");
 			exit(EXIT_FAILURE);
 		}
 	}
@@ -47,7 +47,7 @@ void execute_command(char *command)
 }
 
 /**
- * handle_exit - Handle the exit built-in command.
+ * handle_exit - Handle the exit built-in cmd.
  *
  * This function prints a farewell message and exits the shell.
  */
@@ -58,15 +58,15 @@ void handle_exit(void)
 }
 
 /**
- * handle_env - Handle the env built-in command.
+ * handle_env - Handle the env built-in cmd.
  *
- * This function prints the current environment variables.
+ * This function prints the current environment vars.
  */
 void handle_env(void)
 {
 	extern char **environ;
-
 	char **env = environ;  /* Déclaration en dehors de la boucle */
+
 	while (*env != NULL)
 	{
 		printf("%s\n", *env);
@@ -75,7 +75,7 @@ void handle_env(void)
 }
 
 /**
- * handle_cd - Handle the cd built-in command.
+ * handle_cd - Handle the cd built-in cmd.
  * @dir: The directory to change to. If NULL, change to the home directory.
  *
  * This function changes the current working directory.
@@ -91,14 +91,14 @@ void handle_cd(char *dir)
 }
 
 /**
- * handle_setenv - Handle the setenv built-in command.
- * @variable: The name of the environment variable.
- * @value: The value to set for the environment variable.
+ * handle_setenv - Handle the setenv built-in cmd.
+ * @var: The name of the environment var.
+ * @value: The value to set for the environment var.
  *
- * This function sets or initializes an environment variable.
+ * This function sets or initializes an environment var.
  */
-void handle_setenv(char *variable, char *value)
+void handle_setenv(char *var, char *value)
 {
-	if (setenv(variable, value, 1) != 0)
+	if (setenv(var, value, 1) != 0)
 		perror("setenv");
 }
